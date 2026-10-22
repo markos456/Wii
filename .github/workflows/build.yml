@@ -1,0 +1,34 @@
+name: Build Wii Horizon
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Build Wii homebrew with devkitPro toolchain
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/work" \
+            -w /work \
+            devkitpro/devkitppc:latest \
+            make
+
+      - name: Verify output
+        run: |
+          test -s horizon.dol
+          file horizon.dol || true
+          ls -lh horizon.dol
+
+      - name: Upload DOL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Wii-Horizon-DOL
+          path: horizon.dol
+          if-no-files-found: error
