@@ -66,10 +66,10 @@ static void setupGX(void) {
 
     GX_SetNumChans(1);
     GX_SetChanCtrl(GX_COLOR0A0, GX_DISABLE, GX_SRC_REG, GX_SRC_VTX,
-                   GX_LIGHT_NULL, GX_DF_NONE, GX_AF_NONE);
+                   GX_LIGHTNULL, GX_DF_NONE, GX_AF_NONE);
     GX_SetNumTexGens(0);
     GX_SetNumTevStages(1);
-    GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+    GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
     GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
     GX_InvVtxCache();
 }
@@ -82,7 +82,7 @@ static void drawScene(f32 carX, f32 carZ, f32 speed) {
     guVector target = { carX, 0.3f, carZ - 5.0f };
 
     guLookAt(view, &camera, &up, &target);
-    guMtxPerspective(projection, 55.0f,
+    guPerspective(projection, 55.0f,
         (f32)videoMode->fbWidth / (f32)videoMode->efbHeight, 0.1f, 250.0f);
     GX_LoadProjectionMtx(projection, GX_PERSPECTIVE);
     GX_LoadPosMtxImm(view, GX_PNMTX0);
@@ -160,7 +160,6 @@ int main(void) {
         carZ -= speed;
 
         GX_SetCopyClear((GXColor){ 90, 170, 230, 255 }, 0x00ffffff);
-        GX_InvalidateVtxCache();
         drawScene(carX, carZ, speed);
         GX_DrawDone();
         GX_CopyDisp(framebuffer, GX_TRUE);
